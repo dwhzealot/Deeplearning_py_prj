@@ -1,5 +1,4 @@
 # -*- coding: UTF-8 -*-
-
 import numpy as np
 
 class FullConnLayer(object):
@@ -17,10 +16,9 @@ class FullConnLayer(object):
         self.m = m
         self.n = n
         self.column = column
-        #print('W: n:',n,'colum', column)
         self.activator = activator
+        #np.random.seed(n)
         self.W = W_ini_coe * (np.random.randn(n,column))
-        #print(self.W.shape)
         self.W_before_update = np.zeros([n,column])
         self.b = np.zeros((n, 1))
         self.learn_rate = learn_rate
@@ -34,7 +32,6 @@ class FullConnLayer(object):
         self.Z = np.dot(self.W, input_mat) + self.b
         self.A = self.activator.forward(self.Z)
         self.W_before_update = self.W
-        #print(self.A.shape)
         return self.A
     
     def backward(self, dZ_next_layer, W_next_layer, Y):
@@ -51,7 +48,7 @@ class FullConnLayer(object):
         
         dW = (np.dot(self.dZ, self.input.T))/self.m
         db = (np.sum(self.dZ, axis=1, keepdims=True))/self.m
-
+        self.dW = dW
         self.W -= self.learn_rate * dW
         self.b -= self.learn_rate * db
         return self.dZ, self.W_before_update
@@ -73,11 +70,13 @@ class FullConnNetwork (object):
         self.l_max = l_max #从1开始计算
         self.layer = []
         is_outputlayer = False
-        column = 0
-        #print('l_max',l_max)
-        
+        column = 0       
         assert(len(n) == l_max)
         
+        if l_max == 1:
+            layer = FullConnLayer(m, W_ini_coe ,activator, learn_rate, True, n[0], s)    
+            self.layer.append(layer)
+            return
         for i in range(l_max):
             if i < (l_max-1):
                 #隐藏层
@@ -107,8 +106,4 @@ class FullConnNetwork (object):
     def Train(self, X, Labels):
         self.ForwardPropagation(X)
         self.BackwardPropagation(Labels)
-        
-        
             
-
-
