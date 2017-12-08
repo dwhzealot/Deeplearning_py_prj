@@ -3,10 +3,9 @@ import numpy as np
 from CostFunc.CrossEntropyClass import *
 from WeightInit.WeightInitClass import *
 class FullConnLayer(object):
-    def __init__(self, m, activator, learn_rate, is_OutputLayer, n, column):
+    def __init__(self, activator, learn_rate, is_OutputLayer, n,column):
         '''
         #构造函数
-        m: 样本个数
         n:本层神经元个数，即行数
         colum: W的列数 
         W_ini_coe: W初始化系数
@@ -14,7 +13,6 @@ class FullConnLayer(object):
         learn_rate: W, b更新时的学习率 
         OutputLayer_flag: 是否是输出层
         '''
-        self.m = m
         self.n = n
         self.column = column
         self.activator = activator
@@ -31,6 +29,7 @@ class FullConnLayer(object):
         input_mat: 本层的输入, 即为上一层的输出 A
         '''
         self.input = input_mat
+        self.m = input_mat.shape[1]  #样本个数
         self.Z = np.dot(self.W, input_mat) + self.b
         self.A = self.activator.forward(self.Z)
         self.W_before_update = np.copy(self.W)
@@ -77,9 +76,8 @@ class FullConnLayer(object):
         return self.dZ, self.W_before_update
     
 class FullConnNetwork (object):
-    def __init__(self, m, s, activator, learn_rate,n):
+    def __init__(self, s, activator, learn_rate,n):
         '''
-        m     :样本个数
         s     :单样本元素个数
         l_max : 总层数
         W_ini_coe: W初始化系数
@@ -87,7 +85,6 @@ class FullConnNetwork (object):
         learn_rate: W, b更新时的学习率 
         n: 记录每层的神经元个数的数组
         '''
-        self.m = m
         self.s = s
         self.l_max = len(n) #从1开始计算
         self.layer = []
@@ -96,7 +93,7 @@ class FullConnNetwork (object):
         self.n = n
         l_max = self.l_max
         if l_max == 1:
-            layer = FullConnLayer(m, activator, learn_rate, True, n[0], s)    
+            layer = FullConnLayer(activator, learn_rate, True, n[0], s)    
             self.layer.append(layer)
             return
         for i in range(l_max):
@@ -112,7 +109,7 @@ class FullConnNetwork (object):
                 #输出层
                 is_outputlayer = True
                 column = n[i-1]
-            layer = FullConnLayer(m, activator, learn_rate, is_outputlayer, n[i], column)    
+            layer = FullConnLayer(activator, learn_rate, is_outputlayer, n[i], column)    
             self.layer.append(layer)
     def ForwardPropagation (self, X):
         A = X

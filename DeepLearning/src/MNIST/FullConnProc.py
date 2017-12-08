@@ -21,7 +21,7 @@ print('Dnn3 start')
 activator = SigmoidActivator()
 n = [30,20,10]
 
-network = FullConnNetwork(m, s, activator, learn_rate, n)
+network = FullConnNetwork(s, activator, learn_rate, n)
 
 print('Training start')
 for i in range(epoch):
