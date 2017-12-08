@@ -51,10 +51,30 @@ class FullConnLayer(object):
         dW = (np.dot(self.dZ, self.input.T))/self.m
         db = (np.sum(self.dZ, axis=1, keepdims=True))/self.m
         self.dW = dW
+        self.db = db
         self.W -= self.learn_rate * dW
         self.b -= self.learn_rate * db
         return self.dZ, self.W_before_update
 
+    def backwardForGradientCheck(self, dZ_next_layer, W_next_layer, Y):
+        '''
+        #用于梯度检测中的反向计算W和b的梯度, 不更新W和b
+        dZ_next_layer: 下一层反向传播过来的 dZ
+        W_next_layer: 下一层的权重W
+        Y: 标签值
+        '''
+
+        if (self.is_OutputLayer == True):
+            self.dZ = self.A - Y
+        else:
+            self.dZ = (np.dot(W_next_layer.T,dZ_next_layer)) * (self.activator.backward(self.Z))
+        
+        dW = (np.dot(self.dZ, self.input.T))/self.m
+        db = (np.sum(self.dZ, axis=1, keepdims=True))/self.m
+        self.dW = dW
+        self.db = db
+        return self.dZ, self.W_before_update
+    
 class FullConnNetwork (object):
     def __init__(self, m, s, l_max, W_ini_coe ,activator, learn_rate,n):
         '''
@@ -107,10 +127,17 @@ class FullConnNetwork (object):
     def Train(self, X, Labels):
         self.ForwardPropagation(X)
         self.BackwardPropagation(Labels)
+
+    def BackwardPropagationForGradientCheck(self, Y):
+        W_next_layer = 0
+        dZ_next_layer = 0
+        for i in range(self.l_max):
+            dZ_next_layer, W_next_layer = self.layer[self.l_max - i -1].backwardForGradientCheck(dZ_next_layer, W_next_layer, Y)
+        return
     
     def GradientCheck (self):
         '''
-        #在梯度检查中，如果每次反向传播不更新W， 计算出的delta会比较小。此函数还是保留了剃度检查中的W的更细                                 
+        #在梯度检查中，每次反向传播不要更新W，否则会导致dW的计算出现问题                           
         '''
         CostF = CrossEntropy()
         assert(self.n[self.l_max - 1] == 1)
@@ -118,6 +145,10 @@ class FullConnNetwork (object):
         X = np.reshape(X, (1,5))
         Y = [0.1,0.2,0.3,0.4,0.5]
         Y = np.reshape(Y, (1,5))
+
+        self.ForwardPropagation(X)
+        self.BackwardPropagationForGradientCheck(Y)
+        
         delta_max = 0
         epsilon = 1e-07
         for l in range(self.l_max):
@@ -140,7 +171,6 @@ class FullConnNetwork (object):
                     dW_app = (L_W_add_epsilon - L_W_minus_epsilon) / (2*epsilon)
                     
                     self.layer[l].W = W_backup
-                    self.Train(X, Y)
                     dW_calc = self.layer[l].dW[i,j]
                     
                     delta = dW_calc - dW_app
@@ -150,8 +180,8 @@ class FullConnNetwork (object):
                         delta_max_l = l
                         delta_max_i = i
                         delta_max_j = j
-                    if delta > 1e-05 :
-                        print("GradientCheck failed; layer[%d]W[%d,%d], delta:%.e" %(l,i,j,delta))
+                    if delta_abs > 1e-05 :
+                        print("GradientCheck failed; layer[%d]W[%d,%d], delta:%.e" %(l,i,j,delta_abs))
                         return
-        print("GradientCheck finish, delta_max: layer[%d]W[%d,%d] %e" %(l,i,j,delta_max))
+        print("GradientCheck finish, delta_max: layer[%d]W[%d,%d] %e" %(delta_max_l,delta_max_i,delta_max_j,delta_max))
                        
