@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 from MNIST.GetDataSetClass import *
 from Activator.ActivatorsClass import *
-from FullConn.NetworkClass import *
+from FullConn.NetworkClass import FullConnNetwork
 
 file1 = 'E:/eclipse/eclipse-workspace/MNIST/train-images-idx3-ubyte'
 file2 = 'E:/eclipse/eclipse-workspace/MNIST/train-labels-idx1-ubyte'
@@ -11,19 +11,17 @@ file4 = 'E:/eclipse/eclipse-workspace/MNIST/t10k-labels-idx1-ubyte'
 
 s = 784
 m = 1000
-m_test = 100
-layer_num = 3
-epoch = 1000
-W_ini_coe = 0.1
+m_test = 1000
+epoch = 3000
 learn_rate = 0.1
 
 TrainSet = MNIST_getDataSet(file1, file2)
 
 print('Dnn3 start')
 activator = SigmoidActivator()
-n = [5,3,10]
+n = [30,20,10]
 
-network = FullConnNetwork(m, s, layer_num, W_ini_coe ,activator, learn_rate, n)
+network = FullConnNetwork(m, s, activator, learn_rate, n)
 
 print('Training start')
 for i in range(epoch):
