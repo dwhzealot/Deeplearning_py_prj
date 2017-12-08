@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
 import numpy as np
-from CostF import *
-
+from CostFunc.CrossEntropyClass import *
+from WeightInit.WeightInitClass import *
 class FullConnLayer(object):
-    def __init__(self, m, W_ini_coe ,activator, learn_rate, is_OutputLayer, n,column):
+    def __init__(self, m, activator, learn_rate, is_OutputLayer, n, column):
         '''
         #构造函数
         m: 样本个数
@@ -19,6 +19,7 @@ class FullConnLayer(object):
         self.column = column
         self.activator = activator
         #np.random.seed(n)
+        W_ini_coe = Sigmoid_W_init_coe(column)
         self.W = W_ini_coe * (np.random.randn(n,column))
         self.W_before_update = np.zeros([n,column])
         self.b = np.zeros((n, 1))
@@ -32,7 +33,7 @@ class FullConnLayer(object):
         self.input = input_mat
         self.Z = np.dot(self.W, input_mat) + self.b
         self.A = self.activator.forward(self.Z)
-        self.W_before_update = self.W
+        self.W_before_update = np.copy(self.W)
         return self.A
     
     def backward(self, dZ_next_layer, W_next_layer, Y):
@@ -76,7 +77,7 @@ class FullConnLayer(object):
         return self.dZ, self.W_before_update
     
 class FullConnNetwork (object):
-    def __init__(self, m, s, l_max, W_ini_coe ,activator, learn_rate,n):
+    def __init__(self, m, s, activator, learn_rate,n):
         '''
         m     :样本个数
         s     :单样本元素个数
@@ -88,14 +89,14 @@ class FullConnNetwork (object):
         '''
         self.m = m
         self.s = s
-        self.l_max = l_max #从1开始计算
+        self.l_max = len(n) #从1开始计算
         self.layer = []
         is_outputlayer = False
         column = 0       
-        assert(len(n) == l_max)
         self.n = n
+        l_max = self.l_max
         if l_max == 1:
-            layer = FullConnLayer(m, W_ini_coe ,activator, learn_rate, True, n[0], s)    
+            layer = FullConnLayer(m, activator, learn_rate, True, n[0], s)    
             self.layer.append(layer)
             return
         for i in range(l_max):
@@ -111,7 +112,7 @@ class FullConnNetwork (object):
                 #输出层
                 is_outputlayer = True
                 column = n[i-1]
-            layer = FullConnLayer(m, W_ini_coe ,activator, learn_rate, is_outputlayer, n[i], column)    
+            layer = FullConnLayer(m, activator, learn_rate, is_outputlayer, n[i], column)    
             self.layer.append(layer)
     def ForwardPropagation (self, X):
         A = X
@@ -185,3 +186,5 @@ class FullConnNetwork (object):
                         return
         print("GradientCheck finish, delta_max: layer[%d]W[%d,%d] %e" %(delta_max_l,delta_max_i,delta_max_j,delta_max))
                        
+
+
