@@ -148,7 +148,9 @@ class FullConnNetwork (object):
         self.BackwardPropagationForGradientCheck(Y)
         
         delta_max = 0
+        b_delta_max = 0
         epsilon = 1e-07
+        # Check W Gradient
         for l in range(self.l_max):
             for i in range(self.layer[l].W.shape[0]):
                 for j in range(self.layer[l].W.shape[1]):
@@ -182,6 +184,38 @@ class FullConnNetwork (object):
                         print("GradientCheck failed; layer[%d]W[%d,%d], delta:%.e" %(l,i,j,delta_abs))
                         return
         print("GradientCheck finish, delta_max: layer[%d]W[%d,%d] %e" %(delta_max_l,delta_max_i,delta_max_j,delta_max))
-                       
+        
+        # Check b Gradient
+        for l in range(self.l_max):
+            for i in range(self.layer[l].b.shape[0]):
+                b_backup = np.copy(self.layer[l].b)
+                b_add_epsilon = np.copy(self.layer[l].b)
+                b_minus_epsilon = np.copy(self.layer[l].b)
+                b_add_epsilon[i,0] += epsilon
+                b_minus_epsilon[i,0] -= epsilon
+                
+                self.layer[l].b = b_add_epsilon
+                A_b_add_epsilon = self.ForwardPropagation(X)
+                L_b_add_epsilon = CostF.Calculate(A_b_add_epsilon, Y)
+
+                self.layer[l].b = b_minus_epsilon
+                A_b_minus_epsilon = self.ForwardPropagation(X)
+                L_b_minus_epsilon = CostF.Calculate(A_b_minus_epsilon, Y)                    
+                
+                db_app = (L_b_add_epsilon - L_b_minus_epsilon) / (2*epsilon)
+                
+                self.layer[l].b = b_backup
+                db_calc = self.layer[l].db[i,0]
+                
+                b_delta = db_calc - db_app
+                b_delta_abs = np.abs(b_delta)
+                if b_delta_abs > b_delta_max :
+                    b_delta_max = b_delta_abs
+                    b_delta_max_l = l
+                    b_delta_max_i = i
+                if delta_abs > 1e-05 :
+                    print("GradientCheck failed; layer[%d]b[%d], delta:%.e" %(l,i,b_delta_abs))
+                    return
+        print("GradientCheck finish, delta_max: layer[%d]b[%d] %e" %(b_delta_max_l,b_delta_max_i,b_delta_max))            
 
 
