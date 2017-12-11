@@ -26,7 +26,7 @@ for i in range(5000):
 
     Z1 = np.dot(W1,X) + b1
     A1 = activate.forward(Z1)
-    Z2 = np.dot(W2,Z1) + b2
+    Z2 = np.dot(W2,A1) + b2
     A2 = activate.forward(Z2)
 
 
