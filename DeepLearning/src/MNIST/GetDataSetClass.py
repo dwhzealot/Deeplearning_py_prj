@@ -45,6 +45,38 @@ class MNIST_getDataSet(object):
         labels = np.reshape(label_vec,[labelNum, 10]) # 转型为列表(一维数组)  
         self.labelSet = labels.T
     
+    def minibatch(self, minibatch_size):
+        minibatch_num = self.totalSampleNum // minibatch_size
+        rest_num = self.totalSampleNum % minibatch_size
+        
+        X = []
+        offset = 0
+        for i in range(minibatch_num):
+            minibatch = self.dataSet[:, offset:(offset+ minibatch_size)]
+            minibatch = np.reshape(minibatch, [784, minibatch_size])
+            X.append(minibatch)
+            offset += minibatch_size
+
+        Y = []
+        offset = 0
+        for j in range(minibatch_num):
+            minibatch_Y = self.labelSet[:, offset:(offset+ minibatch_size)]
+            minibatch_Y = np.reshape(minibatch_Y, [10, minibatch_size])
+            Y.append(minibatch_Y)
+            offset += minibatch_size
+        
+        if (rest_num != 0):
+            minibatch_rest = self.dataSet[:, (self.totalSampleNum - rest_num):self.totalSampleNum]
+            X.append(minibatch_rest)
+        
+            minibatch_Y_rest = self.labelSet[:, (self.totalSampleNum - rest_num):self.totalSampleNum]
+            Y.append(minibatch_Y_rest)
+        
+            minibatch_num += 1
+        
+        #print("minibatch_num: %d; rest:%d" %(minibatch_num, rest_num))
+        return X, Y, minibatch_num
+    
     def random_block(self, sample_num):
         block_num = self.totalSampleNum // sample_num
         block_id = np.random.randint(block_num)
