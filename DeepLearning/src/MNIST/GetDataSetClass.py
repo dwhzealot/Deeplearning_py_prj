@@ -162,7 +162,8 @@ def mnist_load_random_block(data_filename, label_filename, sample_num):
     imgs = struct.unpack_from(bitsString, buffers, offset + (block_id * width * height))
     
     datafile.close()  
-    imgs = np.reshape(imgs, [width * height, sample_num])  
+    imgs = np.reshape(imgs, [sample_num, width * height]) 
+    imgs = imgs.T
   #########################################################################################
     labelfile = open(label_filename, 'rb') 
     buffers = labelfile.read()  
