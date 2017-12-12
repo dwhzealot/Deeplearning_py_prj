@@ -27,7 +27,8 @@ class MNIST_getDataSet(object):
       
         dataImgs = struct.unpack_from(bitsString, dataBuffers, dataOffset) # 取data数据，返回一个元组  
         dataBinfile.close()  
-        self.dataSet = np.reshape(dataImgs,[width * height, dataImgNum]) # reshape为[60000,784]型数组  
+        dataImgs = np.reshape(dataImgs,[dataImgNum, width * height]) # reshape为[60000,784]型数组  
+        self.dataSet = dataImgs.T
         
         labelOffset = struct.calcsize('>II')  # 定位到label数据开始的位置  
         numString = '>' + str(labelNum) + "B" # fmt格式：'>60000B'  
@@ -44,7 +45,7 @@ class MNIST_getDataSet(object):
 
         labels = np.reshape(label_vec,[labelNum, 10]) # 转型为列表(一维数组)  
         self.labelSet = labels.T
-    
+
     def minibatch(self, minibatch_size):
         minibatch_num = self.totalSampleNum // minibatch_size
         rest_num = self.totalSampleNum % minibatch_size
@@ -207,11 +208,14 @@ def get_result(vec):
 def evaluate(test_result_mat, test_labels_mat):
     test_result = test_result_mat.T
     test_labels = test_labels_mat.T
-    error = 0
+    correct = 0
     total = len(test_result)
     label = get_result(test_labels)
     predict = get_result(test_result)
     for i in range(total):
-        if label[i] != predict[i]:
-            error += 1
-    return float(error) / float(total)
+        if label[i] == predict[i]:
+            correct += 1
+    return float(correct) / float(total)
+
+
+
