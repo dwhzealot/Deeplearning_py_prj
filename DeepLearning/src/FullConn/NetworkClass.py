@@ -16,7 +16,7 @@ class FullConnLayer(object):
         self.n = n
         self.column = column
         self.activator = activator
-        #np.random.seed(n)
+        np.random.seed(n)
         W_ini_coe = Sigmoid_W_init_coe(column)
         self.W = W_ini_coe * (np.random.randn(n,column))
         self.W_before_update = np.zeros([n,column])
