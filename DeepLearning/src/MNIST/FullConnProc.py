@@ -8,32 +8,31 @@ file2 = 'E:/eclipse/eclipse-workspace/MNIST/train-labels-idx1-ubyte'
 file3 = 'E:/eclipse/eclipse-workspace/MNIST/t10k-images-idx3-ubyte'
 file4 = 'E:/eclipse/eclipse-workspace/MNIST/t10k-labels-idx1-ubyte'
 
-
 s = 784
-m = 1000
 m_test = 1000
-epoch = 3000
+epoch = 500
 learn_rate = 0.1
-
+minibatch_size = 512
 TrainSet = MNIST_getDataSet(file1, file2)
+X, Y, minibatch_num = TrainSet.minibatch(minibatch_size)
+print('minibatch_num',minibatch_num)
 
-print('Dnn3 start')
 activator = SigmoidActivator()
-n = [30,20,10]
+n = [40,30,20,10]
 
 network = FullConnNetwork(s, activator, learn_rate, n)
 
 print('Training start')
 for i in range(epoch):
-    X, Y = TrainSet.random_block(m)
-    network.Train(X, Y)
+    if i%50 == 0:
+        print('epoch:',i)
+    for j in range(minibatch_num):
+        network.Train(X[j], Y[j])
 
 print('Training end\nTesting start')
 TestSet = MNIST_getDataSet(file3, file4)
-X_test,Lable_test = TestSet.random_block(m_test)
-Test_result = network.ForwardPropagation(X_test)
+X_test, Y_test, test_minibatch_num = TestSet.minibatch(minibatch_size)
+Test_result = network.ForwardPropagation(X_test[1])
+print(evaluate(Test_result, Y_test[1]))
 
-print(evaluate(Test_result, Lable_test))
 print('testing end')
-
-print('Dnn3 end')
