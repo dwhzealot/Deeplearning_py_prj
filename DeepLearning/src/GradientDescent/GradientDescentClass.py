@@ -1,5 +1,10 @@
 # -*- coding: UTF-8 -*-
 import numpy as np
+
+class GradientDescent(object):
+    def calc(self, dW, db):
+        return dW, db
+    
 class MomentumGradientDescent(object):
     def __init__(self):
         self.beta = 0.9
@@ -18,9 +23,9 @@ class RMSprop(object):
     def calc(self, dW, db): 
         epsilon = 1e-08
         self.S_dW = (self.beta*self.S_dW) + ((1-self.beta)*(np.square(dW)))
-        self.S_db = (self.beta*self.S_db) + ((1-self.beta)*(np.square(db)))        
+        self.S_db = (self.beta*self.S_db) + ((1-self.beta)*(np.square(db)))
         delta_W = dW / (np.sqrt(self.S_dW) + epsilon)
-        delta_b = dW / (np.sqrt(self.S_db) + epsilon)
+        delta_b = db / (np.sqrt(self.S_db) + epsilon)
         return delta_W, delta_b
     
 class Adam(object):
