@@ -47,7 +47,7 @@ for i in range(l_max):
 Lable = tf.argmax(Y,0)
 rel = tf.argmax(A,0)
 
-CostF = TF_CrossEntropy(A, Y, m)
+CostF = TF_LogisticRegressionCrossEntropy(A, Y, m)
 
 #train_step = tf.train.AdamOptimizer(0.01, 0.9, 0.999).minimize(CostF)
 train_step = tf.train.GradientDescentOptimizer(0.1).minimize(CostF)
@@ -55,7 +55,7 @@ train_step = tf.train.GradientDescentOptimizer(0.1).minimize(CostF)
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
-for i in range(100):
+for i in range(50):
     if i%10 == 0:
         print('epoch',i)
     
