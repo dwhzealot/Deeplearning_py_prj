@@ -9,18 +9,13 @@ from CostFunc.CrossEntropyClass import *
 from NormalizeInput.NormorlizeInputClass import *
 from WeightInit.WeightInitClass import *
 
-file1 = 'E:/eclipse/eclipse-workspace/MNIST/train-images-idx3-ubyte'
-file2 = 'E:/eclipse/eclipse-workspace/MNIST/train-labels-idx1-ubyte'
-file3 = 'E:/eclipse/eclipse-workspace/MNIST/t10k-images-idx3-ubyte'
-file4 = 'E:/eclipse/eclipse-workspace/MNIST/t10k-labels-idx1-ubyte'
-
 
 minibatch_size = 512
 test_minibatch_size = 512
-TrainSet = MNIST_getDataSet(file1, file2)
+TrainSet = MNIST_getDataSet(MNIST_TrainDataSet, MNIST_TrainLabelSet)
 TrainDataSet, TrainLabelSet, minibatch_num = TrainSet.minibatch(minibatch_size)
 print('Train minibatch_num',minibatch_num)
-TestSet = MNIST_getDataSet(file3, file4)
+TestSet = MNIST_getDataSet(MNIST_TestDataSet, MNIST_TestLabelSet)
 TestDataSet, TestLabelSet, test_minibatch_num = TestSet.minibatch(minibatch_size)
 print('Test minibatch_num',test_minibatch_num)
 
@@ -64,8 +59,8 @@ train_step = tf.train.GradientDescentOptimizer(0.1).minimize(CostF)
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
-for i in range(200):
-    if i%20 == 0:
+for i in range(100):
+    if i%10 == 0:
         print('epoch',i)
     
     for j in range(minibatch_num):

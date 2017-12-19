@@ -2,6 +2,11 @@
 import numpy as np  
 import struct  
 
+MNIST_TrainDataSet = 'E:/eclipse/eclipse-workspace/MNIST/train-images-idx3-ubyte'
+MNIST_TrainLabelSet = 'E:/eclipse/eclipse-workspace/MNIST/train-labels-idx1-ubyte'
+MNIST_TestDataSet = 'E:/eclipse/eclipse-workspace/MNIST/t10k-images-idx3-ubyte'
+MNIST_TestLabelSet = 'E:/eclipse/eclipse-workspace/MNIST/t10k-labels-idx1-ubyte'
+
 class MNIST_getDataSet(object):  
     def __init__(self, dataFileName, labelFileName):
         # 读取二进制文件 
