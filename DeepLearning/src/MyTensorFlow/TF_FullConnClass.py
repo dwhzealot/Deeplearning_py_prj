@@ -6,7 +6,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 import tensorflow as tf
 from WeightInit.WeightInitClass import *
 
-def TF_FullConnForwardPropagation(s, n, X):
+def TF_FullConnForwardPropagation(s, n, X, Activator):
     l_max = len(n)
     A = 0
     
@@ -25,5 +25,5 @@ def TF_FullConnForwardPropagation(s, n, X):
         b_var = tf.Variable(b_init, dtype=tf.float32)
         
         Z = tf.matmul(W_var,l_input) + b_var
-        A = tf.sigmoid(Z)
+        A = Activator(Z)
     return A

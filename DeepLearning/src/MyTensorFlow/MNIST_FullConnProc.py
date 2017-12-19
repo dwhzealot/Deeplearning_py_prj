@@ -22,11 +22,11 @@ m = minibatch_size
 n = [40, 30, 20, 10]
 learn_rate = 0.1
 epoch = 50
-
+Activator = tf.sigmoid
 X = tf.placeholder(tf.float32, shape=[s, None])
 Y = tf.placeholder(tf.float32, shape=[10, None])
 
-A = TF_FullConnForwardPropagation(s, n, X)
+A = TF_FullConnForwardPropagation(s, n, X, Activator)
 
 Lable = tf.argmax(Y,0)
 rel = tf.argmax(A,0)
@@ -45,7 +45,13 @@ for i in range(epoch):
         print('Training progress: ', progress,'%')
     if i == (epoch-1):
         print('Training progress: 100%')
-    for j in range(minibatch_num):
+
+    for j in range(minibatch_num-1): 
+        '''
+        #由于最后一个minibatch的size与其他的minibatch的size可能不同.
+        #在Cost函数的公式中，由于TF的占位符规则，m无法动态变化，就无法兼容最后一个minibatch的Cost计算
+        #所以训练时，不训练最后一个minibatch
+        '''
         sess.run(train_step, feed_dict={X: TrainDataSet[j], Y: TrainLabelSet[j]}) 
 
 Lable_list = sess.run(Lable, feed_dict={Y: TestLabelSet[17]})
