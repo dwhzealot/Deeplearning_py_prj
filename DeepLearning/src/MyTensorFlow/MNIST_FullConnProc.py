@@ -5,10 +5,8 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 import tensorflow as tf
 from MNIST.GetDataSetClass import *
-from CostFunc.CrossEntropyClass import *
-from NormalizeInput.NormorlizeInputClass import *
 from WeightInit.WeightInitClass import *
-
+from TF_CostFuncClass import *
 
 minibatch_size = 512
 test_minibatch_size = 512
@@ -49,9 +47,7 @@ for i in range(l_max):
 Lable = tf.argmax(Y,0)
 rel = tf.argmax(A,0)
 
-
-L_mat = (-1) * (Y * tf.log(A) + (1-Y) * tf.log(1-A))
-CostF = tf.reduce_sum(L_mat, 1, keep_dims=True) / m
+CostF = TF_CrossEntropy(A, Y, m)
 
 #train_step = tf.train.AdamOptimizer(0.01, 0.9, 0.999).minimize(CostF)
 train_step = tf.train.GradientDescentOptimizer(0.1).minimize(CostF)
@@ -65,7 +61,6 @@ for i in range(100):
     
     for j in range(minibatch_num):
         sess.run(train_step, feed_dict={X: TrainDataSet[j], Y: TrainLabelSet[j]}) 
-
 
 Lable_list = sess.run(Lable, feed_dict={Y: TestLabelSet[17]})
 Predict_list = sess.run(rel, feed_dict={X: TestDataSet[17]})
