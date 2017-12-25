@@ -10,23 +10,22 @@ from MyTensorFlow.TF_FullConnClass import *
 
 print('Traing start')
 minibatch_size = 512
-test_minibatch_size = 512
-TrainSet = MNIST_getDataSet(MNIST_TrainDataSet, MNIST_TrainLabelSet)
-TrainDataSet, TrainLabelSet, minibatch_num = TrainSet.minibatch(minibatch_size)
-#print('Train minibatch_num',minibatch_num)
-
+test_minibatch_size = 10000
 s = 784
-m = minibatch_size
 n = [40, 30, 20, 10]
 learn_rate = 0.1
 epoch = 50
 Activator = tf.sigmoid
+
+TrainSet = MNIST_getDataSet(MNIST_TrainDataSet, MNIST_TrainLabelSet)
+TrainDataSet, TrainLabelSet, minibatch_num = TrainSet.minibatch(minibatch_size)
+#print('Train minibatch_num',minibatch_num)
 X = tf.placeholder(tf.float32, shape=[s, None])
 Y = tf.placeholder(tf.float32, shape=[10, None])
 
 A = TF_FullConnForwardPropagation(s, n, X, Activator)
 
-CostF = TF_LogisticRegressionCrossEntropy(A, Y, m)
+CostF = TF_LogisticRegressionCrossEntropy(A, Y, minibatch_size)
 
 #train_step = tf.train.AdamOptimizer(0.01, 0.9, 0.999).minimize(CostF)
 train_step = tf.train.GradientDescentOptimizer(learn_rate).minimize(CostF)
@@ -52,12 +51,20 @@ for i in range(epoch):
         '''
         sess.run(train_step, feed_dict={X: TrainDataSet[j], Y: TrainLabelSet[j]}) 
 
-print('Test start, sample number: ',minibatch_size)
-TestSet = MNIST_getDataSet(MNIST_TestDataSet, MNIST_TestLabelSet)
-TestDataSet, TestLabelSet, test_minibatch_num = TestSet.minibatch(minibatch_size)
+print('Test start, sample number: ',test_minibatch_size)
 
-Lable_list = sess.run(Lable, feed_dict={Y: TestLabelSet[17]})
-Predict_list = sess.run(rel, feed_dict={X: TestDataSet[17]})
+TrainSet_test, TrainSet_label, traintest_minibatch_num = TrainSet.minibatch(test_minibatch_size)
+Train_Lable_list = sess.run(Lable, feed_dict={Y: TrainSet_label[0]})
+Train_Predict_list = sess.run(rel, feed_dict={X: TrainSet_test[0]})
+correct_prediction = tf.equal(Train_Predict_list, Train_Lable_list)
+accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+print('Trainset accuracy',sess.run(accuracy))
+
+
+TestSet = MNIST_getDataSet(MNIST_TestDataSet, MNIST_TestLabelSet)
+TestDataSet, TestLabelSet, test_minibatch_num =TrainSet.minibatch(test_minibatch_size)
+Lable_list = sess.run(Lable, feed_dict={Y: TestLabelSet[3]})
+Predict_list = sess.run(rel, feed_dict={X: TestDataSet[3]})
 correct_prediction = tf.equal(Predict_list, Lable_list)
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-print('Test accuracy',sess.run(accuracy)) 
+print('Testset accuracy',sess.run(accuracy)) 

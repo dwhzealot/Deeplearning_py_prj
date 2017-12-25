@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 import numpy as np
-from CostFunc.CrossEntropyClass import *
+from CostFunc.CostClass import *
 from WeightInit.WeightInitClass import *
 class FullConnLayer(object):
     def __init__(self, activator, learn_rate, is_OutputLayer, n,column):
