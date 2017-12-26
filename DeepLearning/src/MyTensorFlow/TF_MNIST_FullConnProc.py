@@ -45,9 +45,9 @@ for i in range(epoch):
 
     for j in range(minibatch_num-1): 
         '''
-        #ÓÉÓÚ×îºóÒ»¸öminibatchµÄsizeÓëÆäËûµÄminibatchµÄsize¿ÉÄÜ²»Í¬.
-        #ÔÚCostº¯ÊýµÄ¹«Ê½ÖÐ£¬ÓÉÓÚTFµÄÕ¼Î»·û¹æÔò£¬mÎÞ·¨¶¯Ì¬±ä»¯£¬¾ÍÎÞ·¨¼æÈÝ×îºóÒ»¸öminibatchµÄCost¼ÆËã
-        #ËùÒÔÑµÁ·Ê±£¬²»ÑµÁ·×îºóÒ»¸öminibatch
+        #ç”±äºŽæœ€åŽä¸€ä¸ªminibatchçš„sizeä¸Žå…¶ä»–çš„minibatchçš„sizeå¯èƒ½ä¸åŒ.
+        #åœ¨Costå‡½æ•°çš„å…¬å¼ä¸­ï¼Œç”±äºŽTFçš„å ä½ç¬¦è§„åˆ™ï¼Œmæ— æ³•åŠ¨æ€å˜åŒ–ï¼Œå°±æ— æ³•å…¼å®¹æœ€åŽä¸€ä¸ªminibatchçš„Costè®¡ç®—
+        #æ‰€ä»¥è®­ç»ƒæ—¶ï¼Œä¸è®­ç»ƒæœ€åŽä¸€ä¸ªminibatch
         '''
         sess.run(train_step, feed_dict={X: TrainDataSet[j], Y: TrainLabelSet[j]}) 
 
