@@ -54,17 +54,17 @@ for i in range(epoch):
 print('Test start, sample number: ',test_minibatch_size)
 
 TrainSet_test, TrainSet_label, traintest_minibatch_num = TrainSet.minibatch(test_minibatch_size)
-Train_Lable_list = sess.run(Lable, feed_dict={Y: TrainSet_label[0]})
-Train_Predict_list = sess.run(rel, feed_dict={X: TrainSet_test[0]})
+Train_Lable_list = sess.run(Lable, feed_dict={Y: TrainSet_label[3]})
+Train_Predict_list = sess.run(rel, feed_dict={X: TrainSet_test[3]})
 correct_prediction = tf.equal(Train_Predict_list, Train_Lable_list)
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 print('Trainset accuracy',sess.run(accuracy))
 
 
 TestSet = MNIST_getDataSet(MNIST_TestDataSet, MNIST_TestLabelSet)
-TestDataSet, TestLabelSet, test_minibatch_num =TrainSet.minibatch(test_minibatch_size)
-Lable_list = sess.run(Lable, feed_dict={Y: TestLabelSet[3]})
-Predict_list = sess.run(rel, feed_dict={X: TestDataSet[3]})
+TestDataSet, TestLabelSet, test_minibatch_num =TestSet.minibatch(test_minibatch_size)
+Lable_list = sess.run(Lable, feed_dict={Y: TestLabelSet[0]})
+Predict_list = sess.run(rel, feed_dict={X: TestDataSet[0]})
 correct_prediction = tf.equal(Predict_list, Lable_list)
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 print('Testset accuracy',sess.run(accuracy)) 
