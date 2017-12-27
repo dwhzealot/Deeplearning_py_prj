@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 import numpy as np  
 import struct  
+from NormalizeInput.NormorlizeInputClass import *
 
 MNIST_TrainDataSet = 'E:/eclipse/eclipse-workspace/MNIST/train-images-idx3-ubyte'
 MNIST_TrainLabelSet = 'E:/eclipse/eclipse-workspace/MNIST/train-labels-idx1-ubyte'
