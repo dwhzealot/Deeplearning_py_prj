@@ -2,6 +2,7 @@
 import numpy as np  
 import struct  
 from NormalizeInput.NormorlizeInputClass import *
+from MyTensorFlow.TF_NormalizeClass import *
 
 MNIST_TrainDataSet = 'E:/eclipse/eclipse-workspace/MNIST/train-images-idx3-ubyte'
 MNIST_TrainLabelSet = 'E:/eclipse/eclipse-workspace/MNIST/train-labels-idx1-ubyte'
@@ -52,10 +53,21 @@ class MNIST_getDataSet(object):
         labels = np.reshape(label_vec,[labelNum, 10]) # 转型为列表(一维数组)  
         self.labelSet = labels.T
 
-    def minibatch(self, minibatch_size):
+        self.NmlzMean = 0
+        self.NmlzVariance = 0
+        
+    def minibatch(self, minibatch_size, Nmlz = False, Train = True):
         minibatch_num = self.totalSampleNum // minibatch_size
         rest_num = self.totalSampleNum % minibatch_size
         
+        if Nmlz == True :
+            RawData = np.copy(self.dataSet)
+            if Train == True :
+                self.NmlzMean,  self.NmlzVariance = TF_GetMeanVariance(RawData)
+            
+            #assert((self.NmlzMean != 0) | (self.NmlzVariance != 0))
+            self.dataSet = TF_NormalizeData(RawData, self.NmlzMean, self.NmlzVariance)
+       
         X = []
         offset = 0
         for i in range(minibatch_num):
@@ -83,7 +95,7 @@ class MNIST_getDataSet(object):
         
         #print("minibatch_num: %d; rest:%d" %(minibatch_num, rest_num))
         return X, Y, minibatch_num
-    
+
     def random_block(self, sample_num):
         block_num = self.totalSampleNum // sample_num
         block_id = np.random.randint(block_num)
