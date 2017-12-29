@@ -56,7 +56,7 @@ class MNIST_getDataSet(object):
         self.NmlzMean = 0
         self.NmlzVariance = 0
         
-    def minibatch(self, minibatch_size, Nmlz = False, Train = True):
+    def minibatch(self, minibatch_size, Nmlz = False, Train = True, mean=0, variance=0):
         minibatch_num = self.totalSampleNum // minibatch_size
         rest_num = self.totalSampleNum % minibatch_size
         
@@ -64,8 +64,11 @@ class MNIST_getDataSet(object):
             RawData = np.copy(self.dataSet)
             if Train == True :
                 self.NmlzMean,  self.NmlzVariance = TF_GetMeanVariance(RawData)
+            else:
+                #assert((self.NmlzMean != 0) | (self.NmlzVariance != 0))
+                self.NmlzMean = mean
+                self.NmlzVariance = variance    
             
-            #assert((self.NmlzMean != 0) | (self.NmlzVariance != 0))
             self.dataSet = TF_NormalizeData(RawData, self.NmlzMean, self.NmlzVariance)
        
         X = []
