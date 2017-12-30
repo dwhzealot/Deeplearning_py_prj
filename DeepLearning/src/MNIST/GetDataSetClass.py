@@ -68,7 +68,7 @@ class MNIST_getDataSet(object):
                 #assert((self.NmlzMean != 0) | (self.NmlzVariance != 0))
                 self.NmlzMean = mean
                 self.NmlzVariance = variance    
-            
+
             self.dataSet = TF_NormalizeData(RawData, self.NmlzMean, self.NmlzVariance)
        
         X = []
