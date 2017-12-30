@@ -26,7 +26,7 @@ def TF_SoftmaxRegressionCrossEntropy(A, Y, m):
     return tf.reduce_sum(L_mat, 1, keep_dims=True) / m
 
 def TF_SoftmaxRegressionCrossEntropy_L2Regularize(A, Y, m, CollectionName):
-    L_mat = (-1) * tf.reduce_sum((Y * tf.log(A)), 0,  keep_dims=false)
+    L_mat = (-1) * tf.reduce_sum((Y * tf.log(A)), 0,  keep_dims=False)
     cost = tf.reduce_sum(L_mat, 1) / m
     tf.add_to_collection(CollectionName, cost)
     return tf.add_n(tf.get_collection(CollectionName))
