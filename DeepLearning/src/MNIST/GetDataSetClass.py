@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 import numpy as np  
 import struct  
-from NormalizeInput.NormorlizeInputClass import *
+
 from MyTensorFlow.TF_NormalizeClass import *
 
 MNIST_TrainDataSet = 'E:/eclipse/eclipse-workspace/MNIST/train-images-idx3-ubyte'
