@@ -8,18 +8,19 @@ from MNIST.GetDataSetClass import *
 from MyTensorFlow.TF_CostFuncClass import *
 from MyTensorFlow.TF_FullConnClass import *
 
-print('Traing start')
+print('TF_MNIST_FullConnProc start')
 minibatch_size = 512
 test_minibatch_size = 10000
 s = 784
 n = [40, 30, 20, 10]
 learn_rate = 0.1
-epoch = 50
+epoch = 80
 Activator = tf.sigmoid
 
+print('Getting Trainset...')
 TrainSet = MNIST_getDataSet(MNIST_TrainDataSet, MNIST_TrainLabelSet)
-TrainDataSet, TrainLabelSet, minibatch_num = TrainSet.minibatch(minibatch_size)
-#print('Train minibatch_num',minibatch_num)
+TrainDataSet, TrainLabelSet, minibatch_num = TrainSet.minibatch(minibatch_size, Nmlz = True, Train = True)
+
 X = tf.placeholder(tf.float32, shape=[s, None])
 Y = tf.placeholder(tf.float32, shape=[10, None])
 
@@ -36,6 +37,7 @@ rel = tf.argmax(A,0)
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
+print('Start training')
 for i in range(epoch):
     if i % (epoch // 10) == 0:
         progress = i / epoch *100
@@ -51,21 +53,27 @@ for i in range(epoch):
         '''
         sess.run(train_step, feed_dict={X: TrainDataSet[j], Y: TrainLabelSet[j]}) 
 
-print('Test start, sample number: ',test_minibatch_size)
-
+print('Start testing Trainset')
+'''
+TrainSet中的数据已经在训练时被归一化，此处无须再次归一化，仅重新设置minibatchSize
+'''
 TrainSet_test, TrainSet_label, traintest_minibatch_num = TrainSet.minibatch(test_minibatch_size)
 Train_Lable_list = sess.run(Lable, feed_dict={Y: TrainSet_label[3]})
 Train_Predict_list = sess.run(rel, feed_dict={X: TrainSet_test[3]})
 correct_prediction = tf.equal(Train_Predict_list, Train_Lable_list)
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-print('Trainset accuracy',sess.run(accuracy))
+print('Trainset predict accuracy',sess.run(accuracy))
 
-
+print('Getting Testset...')
+Test_mean = TrainSet.NmlzMean
+Test_variance = TrainSet.NmlzVariance
 TestSet = MNIST_getDataSet(MNIST_TestDataSet, MNIST_TestLabelSet)
-TestDataSet, TestLabelSet, test_minibatch_num =TestSet.minibatch(test_minibatch_size)
+TestDataSet, TestLabelSet, test_minibatch_num =TestSet.minibatch(test_minibatch_size, Nmlz = True, Train = False,mean = Test_mean, variance=Test_variance)
+
+print('Start testing Testset')
 Lable_list = sess.run(Lable, feed_dict={Y: TestLabelSet[0]})
 Predict_list = sess.run(rel, feed_dict={X: TestDataSet[0]})
 correct_prediction = tf.equal(Predict_list, Lable_list)
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-print('Testset accuracy',sess.run(accuracy)) 
+print('Testset predict accuracy',sess.run(accuracy)) 
 sess.close()
