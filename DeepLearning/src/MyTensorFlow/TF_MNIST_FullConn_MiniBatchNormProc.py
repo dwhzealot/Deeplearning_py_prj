@@ -8,27 +8,29 @@ from MNIST.GetDataSetClass import *
 from MyTensorFlow.TF_CostFuncClass import *
 from MyTensorFlow.TF_FullConnClass import *
 
-print('TF_MNIST_FullConnL2RegularizeProc Traing start')
+print('TF_MNIST_FullConn_MiniBatchNormProc start')
 minibatch_size = 512
 test_minibatch_size = 10000
 s = 784
 n = [40, 30, 20, 10]
 learn_rate = 0.1
-epoch = 300
+epoch = 10
 Activator = tf.sigmoid
-CollectionName = 'loss'
-lamda = 0.002
+
 print('Getting Trainset...')
 TrainSet = MNIST_getDataSet(MNIST_TrainDataSet, MNIST_TrainLabelSet)
+#TrainDataSet, TrainLabelSet, minibatch_num = TrainSet.minibatch(minibatch_size, Nmlz = True, Train = True)
 TrainDataSet, TrainLabelSet, minibatch_num = TrainSet.minibatch(minibatch_size)
 
 X = tf.placeholder(tf.float32, shape=[s, None])
 Y = tf.placeholder(tf.float32, shape=[10, None])
 
-A = TF_FullConnForwardPropagation_L2Regularize(s, n, X, Activator, lamda, CollectionName)
+#A = TF_FullConnForwardPropagation(s, n, X, Activator)
+A = TF_FullConnForwardPropagation_BatchNorm(s, n, X, Activator)
 
-CostF = TF_LogisticRegressionCrossEntropy_L2Regularize(A, Y, minibatch_size, CollectionName)
+CostF = TF_LogisticRegressionCrossEntropy(A, Y, minibatch_size)
 
+#train_step = tf.train.AdamOptimizer(0.01, 0.9, 0.999).minimize(CostF)
 train_step = tf.train.GradientDescentOptimizer(learn_rate).minimize(CostF)
 
 Lable = tf.argmax(Y,0)
@@ -68,8 +70,9 @@ print('Getting Testset...')
 Test_mean = TrainSet.NmlzMean
 Test_variance = TrainSet.NmlzVariance
 TestSet = MNIST_getDataSet(MNIST_TestDataSet, MNIST_TestLabelSet)
+#TestDataSet, TestLabelSet, test_minibatch_num =TestSet.minibatch(test_minibatch_size, Nmlz = True, Train = False,mean = Test_mean, variance=Test_variance)
 TestDataSet, TestLabelSet, test_minibatch_num =TestSet.minibatch(test_minibatch_size)
-
+                                                                 
 print('Start testing Testset')
 Lable_list = sess.run(Lable, feed_dict={Y: TestLabelSet[0]})
 Predict_list = sess.run(rel, feed_dict={X: TestDataSet[0]})
