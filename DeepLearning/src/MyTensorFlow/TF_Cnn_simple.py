@@ -13,8 +13,10 @@ X = tf.placeholder(tf.float32, shape=[1,4,4,1])
 
 W_init = np.ones((2,2,1,1))
 TF_W = tf.Variable(W_init, dtype=tf.float32)
+b_init = np.ones(1)
+TF_b_1 = tf.Variable(b_init, dtype=tf.float32)
 
-CONV = tf.nn.conv2d(X, TF_W, strides=[1, 1, 1, 1], padding='SAME')
+CONV = tf.nn.conv2d(X, TF_W, strides=[1, 1, 1, 1], padding='SAME') + TF_b_1
 POOL = tf.nn.max_pool(CONV, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
 sess = tf.Session()
@@ -31,3 +33,18 @@ pool_res_img = np.reshape(pool_res, (2,2))
 print('pool_res_img\n',pool_res_img)
 
 sess.close()
+'''
+conv_res shape (1, 4, 4, 1)
+conv_res_img
+ [[ 14.  18.  22.  12.]
+ [ 30.  34.  38.  20.]
+ [ 46.  50.  54.  28.]
+ [ 27.  29.  31.  16.]]
+pool_res shape (1, 4, 4, 1)
+pool_res_img
+ [[ 34.  38.]
+ [ 50.  54.]]
+
+'''
+
+
