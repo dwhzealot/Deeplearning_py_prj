@@ -53,13 +53,13 @@ print('pool_res_1 shape', pool_res_1.shape)
 a_conv_res_2 = sess.run(A_CONV_2, feed_dict={X:x_image}) 
 print('a_conv_res_2 shape', a_conv_res_2.shape)
 pool_res_2 = sess.run(POOL_2, feed_dict={X:x_image})
-print('pool_res_1 shape', pool_res_2.shape)
+print('pool_res_2 shape', pool_res_2.shape)
 
 sess.close()
 '''
 a_conv_res_1 shape (1, 28, 28, 32)
 pool_res_1 shape (1, 14, 14, 32)
 a_conv_res_2 shape (1, 14, 14, 64)
-pool_res_1 shape (1, 7, 7, 64)
+pool_res_2 shape (1, 7, 7, 64)
 
 '''
