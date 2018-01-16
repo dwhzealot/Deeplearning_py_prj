@@ -44,7 +44,7 @@ def ConvPoolNetwork(object):
             PoolStrides = [1, PoolStridesSet[i], PoolStridesSet[i], 1]
             PoolPadding = PoolPadSet[i]
             layer = ConvPoolLayer(ConvFilter, ConvStrides, ConvPadding,
-                                  PoolKsize, PoolStrides, Activator[i])
+                                  PoolKsize, PoolStrides, PoolPadding, Activator[i])
             self.layer.append(layer)
             ConvInputCH = ConvCH[i]
         return
