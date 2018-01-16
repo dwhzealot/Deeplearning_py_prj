@@ -5,7 +5,7 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 import tensorflow as tf
 
-def ConvPoolLayer(object):
+class ConvPoolLayer(object):
     def __init__(self, ConvFilter, ConvStrides, ConvPadding, PoolKsize, PoolStrides, PoolPadding, Activator):
         assert(len(ConvFilter) == 4)
         assert(len(ConvStrides) == 4)
@@ -14,7 +14,8 @@ def ConvPoolLayer(object):
         self.ConvFilter = ConvFilter
         self.ConvStrides = ConvStrides
         self.ConvPadding = ConvPadding
-        W_init = (1 / ConvFilter[0]) * np.random.randn(ConvFilter[0],ConvFilter[1],ConvFilter[2],ConvFilter[3])
+        np.random.seed(1)
+        W_init = 0.1 * np.random.randn(ConvFilter[0],ConvFilter[1],ConvFilter[2],ConvFilter[3])
         self.W = tf.Variable(W_init, dtype=tf.float32)
         b_init = 0.1 * np.ones(ConvFilter[3])
         self.b = tf.Variable(b_init, dtype=tf.float32)
@@ -24,13 +25,13 @@ def ConvPoolLayer(object):
         self.PoolPadding = PoolPadding
         self.Act = Activator
         return
-    def Calc(self, X):
+    def calc(self, X):
         CONV = tf.nn.conv2d(X, self.W, strides = self.ConvStrides, padding = self.ConvPadding) + self.b
         CONV_A = self.Act(CONV)
         POOL = tf.nn.max_pool(CONV_A, ksize=self.PoolKsize, strides=self.PoolStrides, padding=self.PoolPadding)
         return POOL
 
-def ConvPoolNetwork(object):
+class ConvPoolNetwork(object):
     def __init__(self, InputCH, ConvFilterSet, ConvCH, ConvStridesSet, ConvPadSet, 
                                 PoolKsizeSet, PoolStridesSet, PoolPadSet, Activator):
         self.l_max = len(ConvFilterSet)
