@@ -46,6 +46,7 @@ def ConvPoolNetwork(object):
             layer = ConvPoolLayer(ConvFilter, ConvStrides, ConvPadding,
                                   PoolKsize, PoolStrides, Activator[i])
             self.layer.append(layer)
+            ConvInputCH = ConvCH[i]
         return
     def ForwardPropagation(self, X):
         A = X
