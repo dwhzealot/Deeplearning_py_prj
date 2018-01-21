@@ -55,7 +55,23 @@ class ConvPoolNetwork(object):
             A = self.layer[i].calc(A)
         return A              
 
+def SizeAfterCPLayer(InputWidth, FilterWidth, Step):
+    assert(InputWidth > FilterWidth)
+    assert(FilterWidth >= Step)
+    if InputWidth % Step == 0 :
+        return InputWidth / Step
+    else:
+        return InputWidth // Step + 1
 
+def SizeAfterCPNw(InputWidth, ConvFilterSet, ConvStridesSet, PoolKsizeSet, PoolStridesSet):
+    LayerNum = len(ConvFilterSet)
+    Input = InputWidth
+    for i in range(LayerNum):
+        SizeOfConv = SizeAfterCPLayer(Input, ConvFilterSet[i], ConvStridesSet[i])
+        SizeOfPool = SizeAfterCPLayer(SizeOfConv, PoolKsizeSet[i], PoolStridesSet[i])
+        Input = SizeOfPool    
+    return np.int32(Input)
+    
 
 
 

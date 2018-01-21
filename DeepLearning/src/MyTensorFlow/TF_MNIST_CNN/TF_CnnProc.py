@@ -11,7 +11,8 @@ from MyTensorFlow.TF_FullConnClass import *
 #x = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
 #x = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
 x = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
-x = np.reshape(x, [-1,8,8,1])
+InputImgSize = 8
+x = np.reshape(x, [-1,InputImgSize,InputImgSize,1])
 m = x.shape[0]
 print('m:', m)
 
@@ -29,15 +30,19 @@ Activator = [act, act]
 CP_Layer = ConvPoolNetwork(1, ConvFilterSet, ConvCH, ConvStridesSet, ConvPadSet, PoolKsizeSet, PoolStridesSet, PoolPadSet, Activator)
 CP_A =  CP_Layer.ForwardPropagation(X)
 
+ImgSizeAfterCP = SizeAfterCPNw(InputImgSize, ConvFilterSet, ConvStridesSet, PoolKsizeSet, PoolStridesSet)
+FC_s = np.square(ImgSizeAfterCP)
+print('FC_s:', FC_s)
+
 '''
-°Ñ¾í»ù²ãÊä³öµÄ½á¹ûÒ»Î¬»¯
+æŠŠå·åŸºå±‚è¾“å‡ºçš„ç»“æœä¸€ç»´åŒ–
 '''
 CP_A_SHAPE = tf.shape(CP_A)
 CP_A_FLAT_LEN = CP_A_SHAPE[1] * CP_A_SHAPE[2] * CP_A_SHAPE[3]
 CP_A_FLAT = tf.reshape(CP_A, [-1, CP_A_FLAT_LEN])
 
 '''
-°ÑÒ»Î¬»¯µÄ½á¹ûÁĞ»¯£¬¼´Ã¿Ò»ÁĞÊı¾İ¶ÔÓ¦Ò»¸öÑù±¾
+æŠŠä¸€ç»´åŒ–çš„ç»“æœåˆ—åŒ–ï¼Œå³æ¯ä¸€åˆ—æ•°æ®å¯¹åº”ä¸€ä¸ªæ ·æœ¬
 '''
 FC_INPUT = tf.transpose(CP_A_FLAT)
 n = [10]
@@ -45,7 +50,8 @@ learn_rate = 0.1
 epoch = 80
 FC_Activator = tf.sigmoid
 
-FC_A = TF_FullConnForwardPropagation(4, n, FC_INPUT, FC_Activator)
+
+FC_A = TF_FullConnForwardPropagation(FC_s, n, FC_INPUT, FC_Activator)
 
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
